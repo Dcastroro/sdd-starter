@@ -41,7 +41,7 @@ These checks validate structure and references. They do **not** prove that a tes
 
 ## CI and security
 
-Pushes and pull requests run `npm run check` on standard Linux GitHub-hosted runners with read-only repository permissions. Action versions are pinned to verified commit hashes. There are no model calls, tokens to configure, deployment steps or third-party runtime dependencies. Local checks work without network access after Node.js is installed.
+Pushes and pull requests run `npm run check` on standard Linux and Windows GitHub-hosted runners with Node.js 22 and 24, read-only repository permissions and at most two parallel jobs. Action versions are pinned to verified commit hashes. There are no model calls, tokens to configure, deployment steps or third-party runtime dependencies. Local checks work without network access after Node.js is installed.
 
 GitHub currently provides standard hosted Actions without a minutes charge for public repositories; private repositories have plan-specific quotas and potential usage charges. See [GitHub Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions). This template does not change spending limits or provision services.
 
@@ -86,6 +86,8 @@ node scripts/sdd-status.mjs /path/to/project
 ```
 
 Initialization preserves existing instructions and policy; it creates only missing `specs/` and `.sdd/constitution.md`. Status is read-only and never executes commands from a manifest. A fresh workspace needs a feature draft before it can pass validation.
+
+Status distinguishes missing, empty and over-limit workspaces, keeps healthy feature summaries visible when another feature fails, and reports pending task IDs with suggested next SDD commands. Diagnostics include fixed reasons and safe relative file locations without echoing input content. Suggestions do not run automatically, and an invalid workspace still exits with failure. See [diagnostics and status](docs/diagnostics.md).
 
 Plugin metadata and local installation are tested separately from helpers. No model-backed evaluation is included; the quality of agent-generated work still needs behavioral tests and review.
 

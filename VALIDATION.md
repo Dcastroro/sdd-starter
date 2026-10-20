@@ -1,5 +1,11 @@
 # Validation
 
+## Actionable status update — starter 0.2.1 / plugin 0.1.1
+
+Nine new regressions fail before the implementation change and pass afterward. The full suite passes 34/34 on Linux (Node.js 26.3.0); Windows (Node.js 24.20.0) passes 31 with three symlink cases skipped for unavailable privileges, covered on Linux. Diagnostics and recommendations remain content-free and read-only.
+
+Strict Claude Code 2.1.286 validation and an isolated install pass. The public CI configuration now covers Windows/Linux with Node 22/24, retains read-only permissions and verified action pins, and passes actionlint/ShellCheck. Hosted results are verified independently after push; private CI is unchanged. See specs/003-actionable-status/verification.md and docs/diagnostics.md for limits and report semantics.
+
 ## Claude SDD plugin update — 0.2.0
 
 On 20 October 2026, the full helper suite passes with 25/25 tests on Linux (Node.js 26.3.0). On Windows (Node.js 24.20.0), 22 pass and 3 symlink cases are skipped for unavailable symlink privileges; those cases pass on Linux.

@@ -2,6 +2,8 @@
 
 The complete example lives in specs/001-spec-validation/traceability.json. All fields are required; unknown fields fail validation.
 
+This strict contract applies to traceability manifests. CLI report objects are separate versioned outputs that can gain additive diagnostic/status metadata; see [diagnostics](diagnostics.md).
+
 Top level: schemaVersion (1), id (same as the feature directory), status (draft, ready or implemented), requirements, decisions, tasks, checks.
 
 - Requirement: id (REQ-001 style), statement, acceptance (one or more nonempty strings).

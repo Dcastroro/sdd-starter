@@ -148,19 +148,80 @@ export function validateManifest(manifest, exists = () => true) {
   return [...errors].sort();
 }
 
-export function checkRepository(root) {
+function failureReason(error) {
+  if (error instanceof SyntaxError) return "INVALID_JSON";
+  if (error?.code === "ENOENT") return "MISSING";
+  if (
+    ["UNSAFE_PATH", "SYMLINK", "NOT_REGULAR"].includes(error?.message) ||
+    error?.code === "ENOTDIR"
+  )
+    return "UNSAFE";
+  if (error?.message === "FILE_LIMIT") return "OVERSIZED";
+  if (error?.message === "EMPTY_OR_LARGE") return "EMPTY_OR_LARGE";
+  if (["EMPTY", "ENTRY_LIMIT"].includes(error?.message)) return error.message;
+  return "UNREADABLE";
+}
+
+function hint(code, reason) {
+  if (code === "SPEC_DIRECTORY") {
+    if (reason === "MISSING")
+      return "Initialize the selected repository before creating a feature.";
+    if (reason === "EMPTY") return "Create the first feature specification.";
+    if (reason === "ENTRY_LIMIT")
+      return "Reduce the specs layout to at most 100 entries before validation.";
+    return "Check access and ensure specs is a regular directory without symlinks.";
+  }
+  return (
+    {
+      FEATURE_DIRECTORY:
+        "Use regular NNN-feature-name directories inside specs.",
+      SPEC_DOCUMENT:
+        "Restore the required nonempty bounded specification document.",
+      MANIFEST_READ:
+        "Restore a readable bounded manifest containing valid JSON.",
+      FEATURE_ID_MISMATCH: "Match the manifest feature ID to its directory.",
+      CHECK_PATH:
+        "Reference an existing repository-relative regular evidence file.",
+      UNKNOWN_REQUIREMENT:
+        "Resolve every referenced requirement ID in this feature.",
+      UNFINISHED_IMPLEMENTATION:
+        "Complete pending tasks or retain a non-implemented feature state.",
+    }[code] ?? "Correct the manifest fields, IDs and requirement coverage."
+  );
+}
+
+// Return only validated identifiers/counts alongside diagnostics; no manifest content escapes.
+export function inspectRepository(root) {
   const issues = [];
-  const add = (feature, code) => issues.push({ feature, code });
+  const featureSummaries = [];
+  const add = (feature, code, extra = {}) =>
+    issues.push({ feature, code, ...extra, hint: hint(code, extra.reason) });
   let features;
   try {
     const folder = regularPath(root, "specs", true);
-    features = fs.readdirSync(folder, { withFileTypes: true });
-    if (!features.length || features.length > 100) throw Error("SPEC_COUNT");
-  } catch {
+    const directory = fs.opendirSync(folder);
+    features = [];
+    try {
+      let entry;
+      while ((entry = directory.readSync()) !== null) {
+        features.push(entry);
+        if (features.length > 100) throw Error("ENTRY_LIMIT");
+      }
+    } finally {
+      directory.closeSync();
+    }
+    if (!features.length) throw Error("EMPTY");
+    features.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+  } catch (error) {
+    add(null, "SPEC_DIRECTORY", {
+      reason: failureReason(error),
+      file: "specs/",
+    });
     return {
       ok: false,
       features: 0,
-      issues: [{ feature: null, code: "SPEC_DIRECTORY" }],
+      featureSummaries,
+      issues,
     };
   }
   for (const feature of features) {
@@ -173,6 +234,7 @@ export function checkRepository(root) {
       add(null, "FEATURE_DIRECTORY");
       continue;
     }
+    const issueCount = issues.length;
     for (const file of [
       "requirements.md",
       "design.md",
@@ -181,20 +243,56 @@ export function checkRepository(root) {
     ]) {
       try {
         read(root, `specs/${id}/${file}`);
-      } catch {
-        add(id, "SPEC_DOCUMENT");
+      } catch (error) {
+        add(id, "SPEC_DOCUMENT", {
+          reason: failureReason(error),
+          file: `specs/${id}/${file}`,
+        });
       }
     }
     try {
       const manifest = JSON.parse(read(root, `specs/${id}/traceability.json`));
-      if (manifest.id !== id) add(id, "FEATURE_ID_MISMATCH");
+      if (manifest?.id !== id)
+        add(id, "FEATURE_ID_MISMATCH", {
+          file: `specs/${id}/traceability.json`,
+        });
       const errors = validateManifest(manifest, (relative) =>
         Boolean(regularPath(root, relative)),
       );
-      for (const code of errors) add(id, code);
-    } catch {
-      add(id, "MANIFEST_READ");
+      for (const code of errors)
+        add(id, code, { file: `specs/${id}/traceability.json` });
+      if (issues.length === issueCount) {
+        const doing = manifest.tasks.filter((x) => x.status === "doing");
+        const todo = manifest.tasks.filter((x) => x.status === "todo");
+        featureSummaries.push({
+          id,
+          status: manifest.status,
+          requirements: manifest.requirements.length,
+          tasks: manifest.tasks.length,
+          completedTasks: manifest.tasks.filter((x) => x.status === "done")
+            .length,
+          doingTasks: doing.length,
+          todoTasks: todo.length,
+          nextTask: (doing[0] ?? todo[0])?.id ?? null,
+          checks: manifest.checks.length,
+        });
+      }
+    } catch (error) {
+      add(id, "MANIFEST_READ", {
+        reason: failureReason(error),
+        file: `specs/${id}/traceability.json`,
+      });
     }
   }
-  return { ok: issues.length === 0, features: features.length, issues };
+  return {
+    ok: issues.length === 0,
+    features: features.length,
+    featureSummaries,
+    issues,
+  };
+}
+
+export function checkRepository(root) {
+  const { ok, features, issues } = inspectRepository(root);
+  return { ok, features, issues };
 }

@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkRepository, regularPath } from "./spec-check.mjs";
+import { inspectRepository } from "./spec-check.mjs";
 
 function present(target, directory) {
   let stat;
@@ -59,32 +59,67 @@ export function initializeWorkspace(root, { dryRun = false } = {}) {
 }
 
 export function workspaceStatus(root) {
-  const validation = checkRepository(root);
-  if (!validation.ok)
-    return {
-      schemaVersion: 1,
-      ok: false,
-      features: [],
-      issues: validation.issues,
-    };
-  const specs = regularPath(root, "specs", true);
-  const features = fs
-    .readdirSync(specs)
-    .sort()
-    .map((id) => {
-      const file = regularPath(root, `specs/${id}/traceability.json`);
-      // checkRepository already enforces this bound; retain it here before the second read.
-      if (fs.statSync(file).size > 262144) throw Error("FILE_LIMIT");
-      const manifest = JSON.parse(fs.readFileSync(file, "utf8"));
-      return {
-        id,
-        status: manifest.status,
-        requirements: manifest.requirements.length,
-        tasks: manifest.tasks.length,
-        completedTasks: manifest.tasks.filter((x) => x.status === "done")
-          .length,
-        checks: manifest.checks.length,
-      };
+  const validation = inspectRepository(root);
+  const features = validation.featureSummaries;
+  const nextActions = [];
+  const layout = validation.issues.find((x) => x.code === "SPEC_DIRECTORY");
+  if (layout) {
+    const action =
+      layout.reason === "MISSING"
+        ? "initialize"
+        : layout.reason === "EMPTY"
+          ? "create-feature"
+          : "review-layout";
+    nextActions.push({
+      feature: null,
+      action,
+      command: layout.reason === "EMPTY" ? "/sdd:specify" : null,
+      helper: layout.reason === "MISSING" ? "init-workspace.mjs" : null,
     });
-  return { schemaVersion: 1, ok: true, features, issues: [] };
+  } else {
+    for (const feature of [...new Set(validation.issues.map((x) => x.feature))])
+      nextActions.push({
+        feature,
+        action: "repair-specification",
+        command: null,
+        helper: null,
+      });
+  }
+  for (const feature of features) {
+    const command =
+      feature.status === "draft"
+        ? "/sdd:design"
+        : feature.status === "implemented"
+          ? "/sdd:review"
+          : feature.completedTasks === feature.tasks
+            ? "/sdd:verify"
+            : "/sdd:implement";
+    nextActions.push({
+      feature: feature.id,
+      action: "continue-feature",
+      command,
+      helper: null,
+    });
+  }
+  const completeLayout =
+    !layout || ["MISSING", "EMPTY"].includes(layout.reason);
+  const summary = {
+    totalFeatures: completeLayout ? validation.features : null,
+    validFeatures: features.length,
+    invalidFeatures: completeLayout
+      ? validation.features - features.length
+      : null,
+    draft: features.filter((x) => x.status === "draft").length,
+    ready: features.filter((x) => x.status === "ready").length,
+    implemented: features.filter((x) => x.status === "implemented").length,
+    pendingTasks: features.reduce((n, x) => n + x.todoTasks + x.doingTasks, 0),
+  };
+  return {
+    schemaVersion: 1,
+    ok: validation.ok,
+    features,
+    issues: validation.issues,
+    summary,
+    nextActions,
+  };
 }

@@ -6,7 +6,7 @@
     {
       "name": "sdd",
       "source": "./",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "description": "Explicit specification-driven workflows and local validation for Claude Code."
     }
   ]

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "003-actionable-status",
+  "status": "implemented",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Provide precise content-free diagnostic reasons and safe relative locations while preserving issue codes.",
+      "acceptance": [
+        "Missing, empty, over-limit and malformed input produce distinct fixed reasons.",
+        "Reports do not contain source contents, exception messages or absolute paths."
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Retain valid feature summaries and suggest the next explicit SDD action without executing or approving it.",
+      "acceptance": [
+        "A broken feature does not hide valid summaries and still fails overall validation.",
+        "State/task counts and recommendations match declared states without claiming semantic approval."
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Bound enumeration and derive status from validated data with Windows/Linux and Node support checks.",
+      "acceptance": [
+        "More than 100 entries fails before feature processing.",
+        "The supported-platform test matrix retains existing security controls."
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "summary": "Use bounded single-pass inspection, additive fixed diagnostics and non-executing next-step guidance; broaden only the public CI test matrix.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "summary": "Add diagnostic reasons and bounded single-pass inspection.",
+      "requirements": ["REQ-001", "REQ-003"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-002",
+      "summary": "Add valid-feature summaries, counts and next-step suggestions.",
+      "requirements": ["REQ-002"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-003",
+      "summary": "Verify behavior, platform matrix, documentation and isolated plugin installation.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "status": "done"
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHECK-001",
+      "summary": "Run actionable-status behavior regressions; platform and installation evidence is recorded in verification.md.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "kind": "test",
+      "path": "test/status-guidance.test.mjs"
+    }
+  ]
+}
