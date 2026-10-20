@@ -1,4 +1,12 @@
-# Initial validation
+# Validation
+
+## Claude SDD plugin update — 0.2.0
+
+On 20 October 2026, the full helper suite passes with 25/25 tests on Linux (Node.js 26.3.0). On Windows (Node.js 24.20.0), 22 pass and 3 symlink cases are skipped for unavailable symlink privileges; those cases pass on Linux.
+
+Claude Code 2.1.286 accepts the plugin and marketplace with strict validation and no warnings. An isolated local marketplace/install smoke test lists all seven skills and no agents, hooks, MCP or LSP servers. This test uses a temporary configuration and makes no model calls; it does not install the plugin into the real user's settings or evaluate model-generated work. See specs/002-claude-sdd-plugin/verification.md for scope and limitations.
+
+## Initial starter — 0.1.0
 
 On 20 October 2026:
 

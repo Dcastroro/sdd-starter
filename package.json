@@ -1,6 +1,6 @@
 {
   "name": "sdd-starter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "description": "A local-first specification-driven development starter with executable traceability checks.",
@@ -10,6 +10,8 @@
   "scripts": {
     "spec:check": "node scripts/spec-check.mjs",
     "spec:new": "node scripts/new-spec.mjs",
+    "sdd:init": "node scripts/init-workspace.mjs",
+    "sdd:status": "node scripts/sdd-status.mjs",
     "test": "node --test",
     "check": "npm run spec:check && npm test"
   },

@@ -47,6 +47,48 @@ GitHub currently provides standard hosted Actions without a minutes charge for p
 
 Never commit real environment files, credentials, customer data or private specifications. Examples are synthetic. See [SECURITY.md](SECURITY.md). The path checks are validation safeguards, not a sandbox against concurrent filesystem changes.
 
+## Claude Code plugin
+
+The optional **SDD Workbench** plugin adds seven explicitly invoked commands:
+
+| Command          | Outcome                                                |
+| ---------------- | ------------------------------------------------------ |
+| `/sdd:specify`   | Scoped requirements and observable acceptance criteria |
+| `/sdd:design`    | Contracts, tradeoffs and failure behavior              |
+| `/sdd:plan`      | Ordered tasks linked to requirements and checks        |
+| `/sdd:implement` | One bounded implementation task with tests             |
+| `/sdd:verify`    | Actual validation results and remaining limits         |
+| `/sdd:review`    | Review the diff against the specification              |
+| `/sdd:status`    | Feature states, completion counts and diagnostics      |
+
+Load a checkout for a Claude Code session, using its absolute path:
+
+```sh
+claude --plugin-dir /absolute/path/to/sdd-starter
+```
+
+Or install through the included marketplace, from your shell:
+
+```sh
+claude plugin marketplace add Dcastroro/sdd-starter
+claude plugin install sdd@dcastroro-sdd --scope user
+```
+
+The marketplace commands modify Claude's configuration at the selected scope. Session loading is available if you do not want a persistent installation. The plugin uses existing session permissions, with no tool grants, background hooks, MCP processes or credentials. Skills consume your normal Claude allowance when invoked; the plugin does not provide free model access or alter model limits. See [the shared workflow and security boundaries](docs/claude-workflow.md).
+
+The helpers also work without Claude:
+
+```sh
+node scripts/init-workspace.mjs /path/to/project --dry-run
+node scripts/init-workspace.mjs /path/to/project
+node scripts/new-spec.mjs 003-feature-name /path/to/project
+node scripts/sdd-status.mjs /path/to/project
+```
+
+Initialization preserves existing instructions and policy; it creates only missing `specs/` and `.sdd/constitution.md`. Status is read-only and never executes commands from a manifest. A fresh workspace needs a feature draft before it can pass validation.
+
+Plugin metadata and local installation are tested separately from helpers. No model-backed evaluation is included; the quality of agent-generated work still needs behavioral tests and review.
+
 ## Adapt it
 
 - Copy `templates/feature/` or use `spec:new` for a new feature.

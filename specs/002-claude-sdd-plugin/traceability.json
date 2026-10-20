@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "id": "002-claude-sdd-plugin",
+  "status": "implemented",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Provide an explicitly invoked Claude Code SDD plugin without permission grants or model calls during validation.",
+      "acceptance": [
+        "Seven documented skills exist and official plugin validation passes.",
+        "An isolated local install exposes the plugin and skills without changing real user settings."
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Initialize selected workspaces and create drafts while preserving existing files and filesystem boundaries.",
+      "acceptance": [
+        "Dry-run and repeated initialization do not overwrite manual work.",
+        "Symlink destinations and invalid feature IDs are rejected; explicit-target draft creation works."
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Report specification state without exposing document contents or executing embedded commands.",
+      "acceptance": [
+        "Reports contain identifiers, statuses, counts and fixed diagnostic codes only.",
+        "Invalid specs fail deterministically and tests cover content leakage and traversal boundaries."
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "summary": "Use an optional root plugin with user-invoked skills and bounded local helpers, inherited permissions and isolated install validation.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "summary": "Add metadata, marketplace and seven scoped skills.",
+      "requirements": ["REQ-001"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-002",
+      "summary": "Add safe initialization and explicit-target draft creation.",
+      "requirements": ["REQ-002"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-003",
+      "summary": "Add content-free status and boundary regressions.",
+      "requirements": ["REQ-003"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-004",
+      "summary": "Validate and record local and isolated installation evidence.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "status": "done"
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHECK-001",
+      "summary": "Run workspace and plugin contract regression tests; native validator and isolated installation evidence are recorded in verification.md.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "kind": "test",
+      "path": "test/workspace.test.mjs"
+    }
+  ]
+}

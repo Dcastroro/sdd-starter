@@ -4,12 +4,17 @@ import { fileURLToPath } from "node:url";
 import { isFeatureId, regularPath } from "../src/spec-check.mjs";
 
 const args = process.argv.slice(2);
-if (args.length !== 1 || !isFeatureId(args[0])) {
-  console.error("Usage: npm run spec:new -- 002-feature-name");
+if (
+  args.length < 1 ||
+  args.length > 2 ||
+  !isFeatureId(args[0]) ||
+  args[1]?.startsWith("--")
+) {
+  console.error("Usage: npm run spec:new -- 002-feature-name [repository]");
   process.exitCode = 2;
 } else {
   try {
-    const root = process.cwd();
+    const root = path.resolve(args[1] ?? process.cwd());
     const parent = regularPath(root, "specs", true);
     const target = path.join(parent, args[0]);
     // Exclusive mkdir refuses existing directories and symbolic links.

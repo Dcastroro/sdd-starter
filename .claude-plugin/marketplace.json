@@ -1,0 +1,13 @@
+{
+  "name": "dcastroro-sdd",
+  "description": "Specification-driven development workflows maintained by David Castro.",
+  "owner": { "name": "David Castro" },
+  "plugins": [
+    {
+      "name": "sdd",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "Explicit specification-driven workflows and local validation for Claude Code."
+    }
+  ]
+}

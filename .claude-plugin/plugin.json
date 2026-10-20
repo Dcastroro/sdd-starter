@@ -1,0 +1,15 @@
+{
+  "name": "sdd",
+  "version": "0.1.0",
+  "description": "Explicit specification-driven workflows for Claude Code: specify, design, plan, implement, verify, review and status.",
+  "author": { "name": "David Castro", "url": "https://github.com/Dcastroro" },
+  "homepage": "https://github.com/Dcastroro/sdd-starter#claude-code-plugin",
+  "repository": "https://github.com/Dcastroro/sdd-starter",
+  "license": "MIT",
+  "keywords": [
+    "sdd",
+    "spec-driven-development",
+    "developer-tools",
+    "claude-code"
+  ]
+}
