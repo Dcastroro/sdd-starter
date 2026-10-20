@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "000-feature-name",
+  "status": "draft",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Replace with an observable user requirement.",
+      "acceptance": ["Replace with a measurable acceptance criterion."]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "summary": "Replace with the selected design and alternatives.",
+      "requirements": ["REQ-001"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "summary": "Replace with a bounded implementation step.",
+      "requirements": ["REQ-001"],
+      "status": "todo"
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHECK-001",
+      "summary": "Replace with the behavioral verification and evidence.",
+      "requirements": ["REQ-001"],
+      "kind": "manual",
+      "path": "specs/000-feature-name/verification.md"
+    }
+  ]
+}

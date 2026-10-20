@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "001-spec-validation",
+  "status": "implemented",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Validate requirement traceability before accepting a specification.",
+      "acceptance": [
+        "Unknown IDs, duplicate IDs and uncovered requirements fail with nonzero exit.",
+        "Implemented features with unfinished tasks fail validation."
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Keep specification checks local, bounded and free of document-content diagnostics.",
+      "acceptance": [
+        "Evidence paths cannot escape the repository or traverse symlinks.",
+        "Malformed and oversized documents produce bounded issue codes.",
+        "The draft generator refuses traversal and existing directories."
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "summary": "Use versioned JSON for traceability and Markdown for reasoning; local regular-file checks, no dependencies or command execution.",
+      "requirements": ["REQ-001", "REQ-002"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "summary": "Implement traceability checking, CLI, draft generation and boundary regression tests.",
+      "requirements": ["REQ-001", "REQ-002"],
+      "status": "done"
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHECK-001",
+      "summary": "Run semantic-reference, CLI and filesystem-boundary tests.",
+      "requirements": ["REQ-001", "REQ-002"],
+      "kind": "test",
+      "path": "test/spec-check.test.mjs"
+    }
+  ]
+}

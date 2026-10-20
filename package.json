@@ -1,0 +1,17 @@
+{
+  "name": "sdd-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A local-first specification-driven development starter with executable traceability checks.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "spec:check": "node scripts/spec-check.mjs",
+    "spec:new": "node scripts/new-spec.mjs",
+    "test": "node --test",
+    "check": "npm run spec:check && npm test"
+  },
+  "license": "MIT"
+}
