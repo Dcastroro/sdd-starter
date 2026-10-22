@@ -11,8 +11,11 @@ Requires Node.js 22 or newer. Clone this repository or choose **Use this templat
 ```sh
 npm ci --ignore-scripts
 npm run check
+npm run spec:new -- 002-your-feature --dry-run
 npm run spec:new -- 002-your-feature
 ```
+
+The preview reports planned relative paths as JSON without writing files. It refuses occupied targets, including symbolic links, and requires an existing `specs/` directory. Initialize a new workspace with `sdd:init` first. Use `npm run spec:new -- --help` for usage.
 
 The last command creates a draft under `specs/002-your-feature/`. Replace the draft text with your actual problem, constraints, acceptance criteria, decisions and tasks. Then run `npm run spec:check`.
 
