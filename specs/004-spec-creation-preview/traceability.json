@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "id": "004-spec-creation-preview",
+  "status": "implemented",
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "statement": "Preview new draft paths without mutating target or current directory.",
+      "acceptance": [
+        "Preview emits versioned safe relative paths.",
+        "Normal creation produces the same five files and preserves manual content."
+      ]
+    },
+    {
+      "id": "REQ-002",
+      "statement": "Preserve refusal and privacy boundaries for preview and creation.",
+      "acceptance": [
+        "Existing files, directories and dangling symlinks are rejected.",
+        "Missing or symlinked specs directories are rejected; reports omit private content and absolute paths."
+      ]
+    },
+    {
+      "id": "REQ-003",
+      "statement": "Expose predictable help and argument handling.",
+      "acceptance": [
+        "Help is read-only and exits zero.",
+        "Unknown or repeated flags and unsafe feature IDs exit 2."
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "ADR-001",
+      "summary": "Use content-free versioned preview after destination preflight, preserving exclusive creation.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"]
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TASK-001",
+      "summary": "Specify behavior and add isolated regression tests.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-002",
+      "summary": "Implement preview and help.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "status": "done"
+    },
+    {
+      "id": "TASK-003",
+      "summary": "Document and validate Windows/Linux behavior and traceability.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "status": "done"
+    }
+  ],
+  "checks": [
+    {
+      "id": "CHECK-001",
+      "summary": "Isolated CLI preview, mutation, refusal, privacy and argument checks.",
+      "requirements": ["REQ-001", "REQ-002", "REQ-003"],
+      "kind": "test",
+      "path": "test/spec-preview.test.mjs"
+    }
+  ]
+}

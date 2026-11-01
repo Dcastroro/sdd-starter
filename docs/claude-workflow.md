@@ -8,7 +8,7 @@ Use the existing session permissions. Skills do not grant tools or authorize com
 
 Each feature lives under specs/NNN-short-name with requirements.md, design.md, tasks.md, verification.md and traceability.json. Read the selected feature and the existing project constitution; a scaffold is not an agreed specification. IDs are local to a feature and must stay consistent.
 
-Initialize a selected repository using the bundled scripts/init-workspace.mjs helper. It creates only specs/ and .sdd/constitution.md when absent. It preserves existing policy and instruction files. The dry-run option previews relative destinations. Create a draft using scripts/new-spec.mjs with a validated feature ID and optional literal repository path. Never edit the installed plugin to store a user's project specifications.
+Initialize a selected repository using the bundled scripts/init-workspace.mjs helper. It creates only specs/ and .sdd/constitution.md when absent. It preserves existing policy and instruction files. The dry-run option previews relative destinations. Preview a draft using scripts/new-spec.mjs with a validated feature ID, optional literal repository path and --dry-run. The JSON preview lists only planned relative paths and writes nothing. Omit --dry-run to create the draft; both modes refuse occupied destinations. Never edit the installed plugin to store a user's project specifications.
 
 Move from draft to ready when the scope/design decision is actually established in the project context; structural validity is not approval. Mark implemented only after completing tasks and recording actual verification. Leave pending checks and unresolved questions visible. Preserve the distinction between runtime behavior, static checks, local tests and CI.
 
