@@ -21,7 +21,7 @@ if (args.length === 1 && args[0] === "--help") {
       console.log(
         result.ok
           ? `PASS: ${result.features} specification(s) validated.`
-          : `FAIL: ${result.issues.map((x) => x.code).join(", ")}`,
+          : `FAIL: ${[...new Set(result.issues.map((x) => x.code))].join(", ")}`,
       );
     process.exitCode = result.ok ? 0 : 1;
   }
