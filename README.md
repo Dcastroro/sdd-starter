@@ -6,18 +6,27 @@ A dependency-free, local-first starter for Spec-Driven Development. Use it for a
 
 ## Try it
 
-Requires Node.js 22 or newer. Clone this repository or choose **Use this template** on GitHub:
+Requires Node.js 22 or newer. Clone this repository or choose **Use this template** on GitHub. From the checkout, verify the starter and preview a feature:
 
 ```sh
 npm ci --ignore-scripts
 npm run check
-npm run spec:new -- 002-your-feature --dry-run
-npm run spec:new -- 002-your-feature
+npm run spec:new -- 005-your-feature --dry-run
+npm run spec:new -- 005-your-feature
 ```
 
 The preview reports planned relative paths as JSON without writing files. It refuses occupied targets, including symbolic links, and requires an existing `specs/` directory. Initialize a new workspace with `sdd:init` first. Use `npm run spec:new -- --help` for usage.
 
-The last command creates a draft under `specs/002-your-feature/`. Replace the draft text with your actual problem, constraints, acceptance criteria, decisions and tasks. Then run `npm run spec:check`.
+The last command creates a draft under `specs/005-your-feature/`. Start with `requirements.md`, then link each requirement to a design decision, a task and a check in `traceability.json`. Run `npm run spec:check` for structural validation and `npm run sdd:status` to see pending tasks.
+
+To add SDD files to an existing project, run the helpers from this checkout and pass the target directory:
+
+```sh
+node scripts/init-workspace.mjs ../my-project --dry-run
+node scripts/init-workspace.mjs ../my-project
+node scripts/new-spec.mjs 001-first-feature ../my-project
+node scripts/spec-check.mjs ../my-project
+```
 
 ## The working loop
 
